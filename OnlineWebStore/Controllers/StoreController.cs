@@ -2,10 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using OnlineWebStore.Dto;
 using OnlineWebStore.service;
+using System.Net;
 
 namespace OnlineWebStore.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/")]
     [ApiController]
     [Authorize(Roles = "Manager,Employee")]
     public class StoreController: ControllerBase
@@ -22,23 +23,23 @@ namespace OnlineWebStore.Controllers
         public IActionResult addStore(StoreDto storeDto)
         {
             storeService.addStore(storeDto);
-            return Ok("Store Saved");
+            return StatusCode((int)HttpStatusCode.OK, new { message = "Store Added Successfully", status = "success" });
         }
 
         [HttpGet("stores/{storeId}")]
         [Authorize(Roles = "Manager,Employee")]
         public IActionResult getStore(int storeId)
         {
-            storeService.getStore(storeId);
-            return Ok("Store Saved");
+         StoreDto store=   storeService.getStore(storeId);
+            return Ok(store);
         }
 
         [HttpGet("stores")]
         [Authorize(Roles = "Manager")]
         public IActionResult getStores( )
         {
-            storeService.getStores();
-            return Ok("Store Saved");
+          List<StoreDto> stores=  storeService.getStores();
+            return Ok(stores);
         }
 
     }
