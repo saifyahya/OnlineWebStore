@@ -64,8 +64,7 @@ namespace OnlineWebStore.service
                 throw new Exception($"Order {orderCode} Not Exists.");
             }
             context.orders.Remove(order);
-            // var productOrders = context.productsOrder.Where(po => po.OrderId == order.Id).ToList();
-            // context.productsOrder.RemoveRange(productOrders); context.SaveChanges();
+             context.SaveChanges();
             isDeleted = true;
             return isDeleted;
         }

@@ -24,11 +24,19 @@ namespace OnlineWebStore.Controllers
         [HttpPost("users/signup")]
         public async Task<IActionResult> createAccount(SignupDto signupDto)
         {
-          var result =  await accountService.signUp(signupDto);
-            if(result.Succeeded) { 
-            return StatusCode((int)HttpStatusCode.OK, new { message = "User Added Successfully", status = "success" });
+            try
+            {
+                var result = await accountService.signUp(signupDto);
+                if (result.Succeeded)
+                {
+                    return StatusCode((int)HttpStatusCode.OK, new { message = "User Added Successfully", status = "success" });
+                }
+                return StatusCode((int)HttpStatusCode.BadRequest, new { message = "Failed to add user", status = "error" });
+            } catch (Exception ex) {
+                return StatusCode((int)HttpStatusCode.BadRequest, new { message = "Failed to add user", status = "error" });
+
             }
-            return StatusCode((int)HttpStatusCode.BadRequest, new { message = "Failed to add user", status = "error" });
+
         }
 
         [HttpPost("users/login")]
@@ -53,6 +61,7 @@ namespace OnlineWebStore.Controllers
                 }
                 authClaim.Add(new Claim("roles", string.Join(",", userRoles)));
                 var user = await accountService.getUser(signinDto.Username);
+                if(user.Store!=null)
                 authClaim.Add(new Claim("storeId",user.Store.Id.ToString()));
                 var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("R4nd0mlyGeneratedKeyThatIs32Chars"));
 

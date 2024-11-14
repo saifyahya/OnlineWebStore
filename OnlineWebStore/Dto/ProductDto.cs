@@ -14,5 +14,6 @@ namespace OnlineWebStore.Dto
         public int StockLevel { get; set; }
 
         public int StoreId { get; set; }
+
     }
 }

@@ -24,7 +24,7 @@ namespace OnlineWebStore.Controllers
            return StatusCode((int)HttpStatusCode.OK, new { message = "Order Added Successsfuly", status = "success" });
         }
 
-        [HttpPut("orders")]
+        [HttpPut("orders/{orderCode}")]
         [Authorize(Roles = "Employee")]
         public IActionResult editOrderStatus(string orderCode, string status)
         {
@@ -35,7 +35,7 @@ namespace OnlineWebStore.Controllers
             return BadRequest("Error Updating Order");
         }
 
-        [HttpDelete("orders")]
+        [HttpDelete("orders/{orderCode}")]
         [Authorize(Roles = "Employee")]
         public IActionResult deleteOrder(string orderCode)
         {

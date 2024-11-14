@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnlineWebStore.Dto;
+using OnlineWebStore.entity;
 using OnlineWebStore.service;
 using System.Net;
 
@@ -30,8 +31,15 @@ namespace OnlineWebStore.Controllers
         [Authorize(Roles = "Manager,Employee")]
         public IActionResult getStore(int storeId)
         {
-         StoreDto store=   storeService.getStore(storeId);
-            return Ok(store);
+            try
+            {
+                StoreDto store = storeService.getStore(storeId);
+                return Ok(store);
+            }
+            catch (Exception ex) {
+                return StatusCode((int)HttpStatusCode.BadRequest, new { message = ex.Message, status = "success" });
+            }
+       
         }
 
         [HttpGet("stores")]
@@ -39,6 +47,14 @@ namespace OnlineWebStore.Controllers
         public IActionResult getStores( )
         {
           List<StoreDto> stores=  storeService.getStores();
+            return Ok(stores);
+        }
+
+        [HttpGet("stores/empty")]
+        [Authorize(Roles = "Manager")]
+        public IActionResult getNewStores()
+        {
+            List<StoreDto> stores = storeService.getNewStores();
             return Ok(stores);
         }
 

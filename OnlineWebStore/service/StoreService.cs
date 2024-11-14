@@ -29,7 +29,14 @@ namespace OnlineWebStore.service
 
         public StoreDto getStore(int id)
         {
-            return mapper.Map<StoreDto>(context.stores.Include("Orders").Include("Products"));
+            Store str = context.stores.Where((str)=>str.Id==id).FirstOrDefault();
+            return mapper.Map<StoreDto>(str);
+        }
+
+        public List<StoreDto> getNewStores()
+        {
+           List<Store> stores =context.stores.Where((s)=>s.ApplicationUser==null).ToList();
+            return mapper.Map < List < StoreDto >> (stores);
         }
 
 

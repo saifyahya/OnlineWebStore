@@ -7,5 +7,6 @@ namespace OnlineWebStore.service
         void addStore(StoreDto storeDto);
         public StoreDto getStore(int id);
         public List<StoreDto> getStores();
+        public List<StoreDto> getNewStores();
     }
 }

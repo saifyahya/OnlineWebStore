@@ -52,7 +52,6 @@ namespace OnlineWebStore.service
                 throw new ArgumentNullException(nameof(productName), "Product name cannot be null.");
             }
 
-            // Retrieve the store and include related products
             Store store = context.stores.Include(s => s.Products).FirstOrDefault(s => s.Id == productDto.StoreId);
 
             if (store == null)
@@ -60,7 +59,6 @@ namespace OnlineWebStore.service
                 throw new Exception($"Store with id {productDto.StoreId} does not exist.");
             }
 
-            // Retrieve the existing product by name
             Product retrievedProduct = store.Products.FirstOrDefault(p => p.Name.Equals(productName, StringComparison.OrdinalIgnoreCase));
 
             if (retrievedProduct == null)
@@ -68,30 +66,20 @@ namespace OnlineWebStore.service
                 throw new Exception($"Product with name '{productName}' does not exist.");
             }
 
-            // Check for duplicate product by name
             Product duplicateProduct = store.Products.FirstOrDefault(p => p.Name.Equals(productDto.Name, StringComparison.OrdinalIgnoreCase));
 
-            if (duplicateProduct != null)
+            if (duplicateProduct != null && productDto.Name!=productName)
             {
                 throw new Exception($"Product with name '{productDto.Name}' already exists.");
             }
 
-            // Update product fields
             retrievedProduct.Name = productDto.Name;
             retrievedProduct.Description = productDto.Description;
             retrievedProduct.Price = productDto.Price;
             retrievedProduct.StockLevel = productDto.StockLevel;
             retrievedProduct.StoreId = productDto.StoreId;
-
-            // Save changes to the context
-            try
-            {
-                context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error saving changes to the database.", ex);
-            }
+            context.SaveChanges();
+        
         }
 
 
@@ -117,7 +105,7 @@ namespace OnlineWebStore.service
 
         public List<ProductDto> getStoreProducts(int storeId)
         {
-            Store store = context.stores.Include("Products").FirstOrDefault(s => s.Id == storeId);
+            Store store = context.stores.Include((p)=>p.Products).FirstOrDefault(s => s.Id == storeId);
             if (store == null)
             {
                 throw new Exception($"Store with id {storeId} Not Exists.");

@@ -6,6 +6,7 @@ using OnlineWebStore.entity;
 using OnlineWebStore.service;
 using static System.Net.WebRequestMethods;
 using System.Text;
+using OnlineWebStore.Dto;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -68,7 +69,51 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<StoreContext>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+
+    if (!dbContext.stores.Any())
+    {
+
+        var store = new Store
+        {
+            Location = "Amman",
+            Capacity = 100,
+            IsActive = true,
+        };
+        dbContext.stores.Add(store);
+        dbContext.SaveChanges();
+    }
+
+    var defaultUser = await userManager.FindByEmailAsync("admin@test.com");
+
+    if (defaultUser == null)
+    {
+        defaultUser = new ApplicationUser
+        {
+            UserName = "Admin",
+            Email = "admin@test.com",
+            DOB = DateTime.Now,
+            Name = "Admin",
+            PhoneNumber = "0790824434",
+        };
+
+        var result = await userManager.CreateAsync(defaultUser, "Test#123");
+        if (result.Succeeded)
+        {
+            var roleResult = await userManager.AddToRoleAsync(defaultUser, "Manager");
+
+        }
+    }
+
+    }
+
+
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
